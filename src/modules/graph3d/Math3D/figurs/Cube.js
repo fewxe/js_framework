@@ -59,7 +59,7 @@ export default class Cube extends Figure {
         ];
     }
 
-    settings(onUpdate) {
+    settings() {
         return (
             <div>
                 <label>
@@ -69,7 +69,6 @@ export default class Cube extends Figure {
                         defaultValue={this.size}
                         onChange={(e) => {
                             this.size = parseInt(e.target.value);
-                            onUpdate();
                         }}
                     />
                 </label>

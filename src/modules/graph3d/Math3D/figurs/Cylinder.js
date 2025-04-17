@@ -97,7 +97,7 @@ export default class Cylinder extends Figure {
         ));
     }
 
-    settings(onUpdate) {
+    settings() {
         return (
             <div>
                 <label>
@@ -107,7 +107,6 @@ export default class Cylinder extends Figure {
                         defaultValue={this.radius}
                         onChange={(e) => {
                             this.radius = parseFloat(e.target.value);
-                            onUpdate();
                         }}
                     />
                 </label>
@@ -118,7 +117,6 @@ export default class Cylinder extends Figure {
                         defaultValue={this.height}
                         onChange={(e) => {
                             this.height = parseFloat(e.target.value);
-                            onUpdate();
                         }}
                     />
                 </label>
@@ -129,7 +127,6 @@ export default class Cylinder extends Figure {
                         defaultValue={this.segments}
                         onChange={(e) => {
                             this.segments = parseInt(e.target.value, 10);
-                            onUpdate();
                         }}
                     />
                 </label>

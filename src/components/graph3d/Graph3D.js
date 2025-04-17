@@ -262,6 +262,9 @@ export default class Graph3D extends Component {
                         <option value="cylinder">Cylinder</option>
                         <option value="sphere">Sphere</option>
                     </select>
+                    <div>
+                        {this.state.scene.settings()}
+                    </div>
                 </div>
             </div>
         );

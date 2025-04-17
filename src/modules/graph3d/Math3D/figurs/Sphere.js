@@ -72,7 +72,7 @@ export default class Sphere {
         }
     }
 
-    settings(onUpdate) {
+    settings() {
         return (
             <div>
                 <label>
@@ -82,7 +82,7 @@ export default class Sphere {
                         defaultValue={this.radius}
                         onChange={(e) => {
                             this.radius = parseFloat(e.target.value);
-                            onUpdate();
+                           
                         }}
                     />
                 </label>
@@ -93,7 +93,7 @@ export default class Sphere {
                         defaultValue={this.count}
                         onChange={(e) => {
                             this.count = parseInt(e.target.value, 10);
-                            onUpdate();
+                           
                         }}
                     />
                 </label>
