@@ -1,7 +1,7 @@
 export default class Canvas {
-    constructor({ WIN, id, width = 600, height = 600, callbacks = {} }) {
+    constructor({ WIN, id = null, width = 600, height = 600, callbacks = {}, canvas }) {
         this.WIN = WIN;
-        this.canvas = document.getElementById(id);
+        this.canvas = canvas || document.getElementById(id);
         this.canvas.width = width;
         this.canvas.height = height;
         this.context = this.canvas.getContext(`2d`);
@@ -70,7 +70,6 @@ export default class Canvas {
     }
 
     tablet(x, y, color = 'red', size = 2, reverse) {
-        size = size;
         this.context.beginPath();
         this.context.strokeStyle = color;
         this.context.fillStyle = color;

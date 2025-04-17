@@ -43,7 +43,7 @@ export default class Sphere {
     generatePoints(radius, count) {
         for (let i = 0; i <= count; i++) {
             const theta = Math.PI * i / count;
-            for (let j = 0; j <= count; j++) { // Исправлено i на j
+            for (let j = 0; j <= count; j++) {
                 const phi = 2 * Math.PI * j / count;
                 const x = radius * Math.sin(theta) * Math.cos(phi);
                 const y = radius * Math.sin(theta) * Math.sin(phi);
