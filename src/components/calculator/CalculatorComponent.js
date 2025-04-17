@@ -1,63 +1,49 @@
-import React, { useState } from 'react';
+import React from 'react';
 import _Calculator from '../../modules/calculator/calculators/Calculator.js';
 
-const CalculatorComponent = () => {
-    const calc = new _Calculator();
-    let inputs = { a: '', b: '', c: '' };
+export default class CalculatorComponent extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            a: '',
+            b: '',
+            c: '',
+        };
+        this.calc = new _Calculator();
+    }
 
-    const handleInputChange = (e) => {
-        const { id, value } = e.target;
-        inputs[id] = value;
-        render();
+    handleOperation = (operation) => {
+        let result = this.calc[operation](this.state.a, this.state.b);
+        this.setState({ c: result });
     };
 
-    const handleOperation = (operand) => {
-        const a = calc.getValue(inputs.a);
-        const b = calc.getValue(inputs.b);
-        const result = calc[operand](a, b);
-        inputs.c = result !== null ? result.toString() : 'Ошибка';
-        render();
-    };
-
-    const render = () => {
-        document.getElementById('a').value = inputs.a;
-        document.getElementById('b').value = inputs.b;
-        document.getElementById('c').value = inputs.c;
-    };
-
-    return (
-        <div>
+    render() {
+        return (
             <div>
-                <input
-                    id="a"
-                    type="text"
-                    placeholder="Введите первое значение"
-                    defaultValue={inputs.a}
-                    onInput={handleInputChange}
-                />
-                <input
-                    id="b"
-                    type="text"
-                    placeholder="Введите второе значение"
-                    defaultValue={inputs.b}
-                    onInput={handleInputChange}
-                />
-                <input
-                    id="c"
-                    type="text"
-                    placeholder="Результат"
-                    defaultValue={inputs.c}
-                    readOnly
-                />
+                <div>
+                    <input
+                        type="text"
+                        value={this.state.a}
+                        onChange={(e) => {this.setState({a: this.calc.getValue(e.target.value)})}}
+                    />
+                    <input
+                        type="int"
+                        value={this.state.b}
+                        onChange={(e) => {this.setState({b: this.calc.getValue(e.target.value)})}}
+                    />
+                    <input
+                        type="int"
+                        readOnly
+                        value={this.state.c}
+                    />
+                </div>
+                <div>
+                    <button onClick={() => this.handleOperation('add')}>+</button>
+                    <button onClick={() => this.handleOperation('sub')}>-</button>
+                    <button onClick={() => this.handleOperation('mult')}>*</button>
+                    <button onClick={() => this.handleOperation('div')}>/</button>
+                </div>
             </div>
-            <div>
-                <button onClick={() => handleOperation('add')}>+</button>
-                <button onClick={() => handleOperation('sub')}>-</button>
-                <button onClick={() => handleOperation('mult')}>*</button>
-                <button onClick={() => handleOperation('div')}>/</button>
-            </div>
-        </div>
-    );
-};
-
-export default CalculatorComponent;
+        );
+    }
+}
