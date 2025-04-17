@@ -22,17 +22,14 @@ export default class CalculatorComponent extends React.Component {
             <div>
                 <div>
                     <input
-                        type="text"
                         value={this.state.a}
                         onChange={(e) => {this.setState({a: this.calc.getValue(e.target.value)})}}
                     />
                     <input
-                        type="int"
                         value={this.state.b}
                         onChange={(e) => {this.setState({b: this.calc.getValue(e.target.value)})}}
                     />
                     <input
-                        type="int"
                         readOnly
                         value={this.state.c}
                     />
