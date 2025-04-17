@@ -1,8 +1,7 @@
 import Point from '../entities/Point.js';
 import Polygon from '../entities/Polygon.js';
 import Edge from '../entities/Edge.js';
-import { applyColorToPolygons } from '../../../../modules/utils/PolygonUtils.js'; // Исправлен путь
-import ColorPicker from '../../../../components/colorpicker/ColorPicker.js'; // Исправлен путь
+
 
 export default class Sphere {
     constructor(radius = 10, count = 10) {
@@ -98,7 +97,6 @@ export default class Sphere {
                         }}
                     />
                 </label>
-                <ColorPicker polygons={this.polygons} onUpdate={onUpdate} />
             </div>
         );
     }

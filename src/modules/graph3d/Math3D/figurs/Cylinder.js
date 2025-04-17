@@ -2,7 +2,7 @@ import Edge from "../entities/Edge.js";
 import Point from "../entities/Point.js";
 import Polygon from "../entities/Polygon.js";
 import Figure from "../entities/Figure.js";
-import ColorPicker from '../../../../components/colorpicker/ColorPicker.js';
+
 
 export default class Cylinder extends Figure {
     constructor(segments = 60, height = 5, radius = 5) {
@@ -133,7 +133,6 @@ export default class Cylinder extends Figure {
                         }}
                     />
                 </label>
-                <ColorPicker polygons={this.polygons} onUpdate={onUpdate} />
             </div>
         );
     }

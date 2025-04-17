@@ -2,7 +2,7 @@ import Edge from "../entities/Edge.js";
 import Point from "../entities/Point.js";
 import Polygon from "../entities/Polygon.js";
 import Figure from "../entities/Figure.js";
-import ColorPicker from '../../../../components/colorpicker/ColorPicker.js';
+
 
 export default class Cube extends Figure {
     constructor(size = 5) {
@@ -73,7 +73,6 @@ export default class Cube extends Figure {
                         }}
                     />
                 </label>
-                <ColorPicker polygons={this.polygons} onUpdate={onUpdate} />
             </div>
         );
     }
