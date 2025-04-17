@@ -18,7 +18,7 @@ window.requestAnyFrame = (function() {
         };
 })();
 
-class Graph3D extends Component {
+export default class Graph3D extends Component {
     constructor(props) {
         super(props);
 
@@ -132,7 +132,7 @@ class Graph3D extends Component {
 
     handleMouseMove = (event) => {
         if (this.state.canRotate) {
-            const ROTATION_SENSITIVITY = 1;
+            const ROTATION_SENSITIVITY = 5;
             const gradus = Math.PI / 180 / ROTATION_SENSITIVITY;
 
             this.state.scene.points.forEach((point) => {
@@ -219,8 +219,9 @@ class Graph3D extends Component {
 
         this.mainCanvas.text(
             `FPS: ${this.state.fps}`,
-            this.WIN.LEFT + 0.5,
-            this.WIN.BOTTOM + this.WIN.HEIGHT - 1,
+            this.WIN.LEFT,
+            this.WIN.BOTTOM + this.WIN.HEIGHT - 1 ,
+            "red"
         );
     }
 
@@ -266,5 +267,3 @@ class Graph3D extends Component {
         );
     }
 }
-
-export default Graph3D;

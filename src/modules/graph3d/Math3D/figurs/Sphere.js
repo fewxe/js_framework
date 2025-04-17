@@ -4,7 +4,7 @@ import Edge from '../entities/Edge.js';
 
 
 export default class Sphere {
-    constructor(radius = 10, count = 10) {
+    constructor(radius = 10, count = 50) {
         this._radius = radius;
         this._count = count;
         this.points = [];
