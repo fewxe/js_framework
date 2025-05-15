@@ -1,46 +1,27 @@
-import React from 'react';
-import _Calculator from '../../modules/calculator/calculators/Calculator.js';
+import { useRef } from 'react';
+import useCalculator from './useCalculator.js';
 
-export default class CalculatorComponent extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            a: '',
-            b: '',
-            c: '',
-        };
-        this.calc = new _Calculator();
-    }
+const CalculatorComponent = () => {
+    const aRef = useRef();
+    const bRef = useRef();
+    const cRef = useRef();
+    const calc = useCalculator(aRef, bRef, cRef);
 
-    handleOperation = (operation) => {
-        let result = this.calc[operation](this.state.a, this.state.b);
-        this.setState({ c: result });
-    };
-
-    render() {
-        return (
+    return (
+        <div>
             <div>
-                <div>
-                    <input
-                        value={this.state.a}
-                        onChange={(e) => {this.setState({a: this.calc.getValue(e.target.value)})}}
-                    />
-                    <input
-                        value={this.state.b}
-                        onChange={(e) => {this.setState({b: this.calc.getValue(e.target.value)})}}
-                    />
-                    <input
-                        readOnly
-                        value={this.state.c}
-                    />
-                </div>
-                <div>
-                    <button onClick={() => this.handleOperation('add')}>+</button>
-                    <button onClick={() => this.handleOperation('sub')}>-</button>
-                    <button onClick={() => this.handleOperation('mult')}>*</button>
-                    <button onClick={() => this.handleOperation('div')}>/</button>
-                </div>
+                <textarea ref={aRef} />
+                <textarea ref={bRef} />
+                <textarea ref={cRef} readOnly />
             </div>
-        );
-    }
-}
+            <div>
+                <button onClick={() => calc('add')}>+</button>
+                <button onClick={() => calc('sub')}>-</button>
+                <button onClick={() => calc('mult')}>*</button>
+                <button onClick={() => calc('div')}>/</button>
+            </div>
+        </div>
+    );
+};
+
+export default CalculatorComponent;
