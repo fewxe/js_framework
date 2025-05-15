@@ -3,6 +3,7 @@ import Point from '../../modules/graph3d/Math3D/entities/Point.js';
 import Cube from '../../modules/graph3d/Math3D/figurs/Cube.js';
 import Cylinder from '../../modules/graph3d/Math3D/figurs/Cylinder.js';
 import Sphere from '../../modules/graph3d/Math3D/figurs/Sphere.js';
+import Torus from '../../modules/graph3d/Math3D/figurs/Torus.js';
 import Math3D from '../../modules/graph3d/Math3D.js';
 import Canvas from '../../modules/Canvas/Canvas.js';
 import Light from '../../modules/graph3d/Math3D/entities/Light.js';
@@ -48,6 +49,7 @@ export default class Graph3D extends Component {
             cube: () => new Cube(),
             cylinder: () => new Cylinder(),
             sphere: () => new Sphere(),
+            torus: () => new Torus(),
         };
         
         this.mainCanvas = null;
@@ -261,6 +263,7 @@ export default class Graph3D extends Component {
                         <option value="cube">Cube</option>
                         <option value="cylinder">Cylinder</option>
                         <option value="sphere">Sphere</option>
+                        <option value="torus">Torus</option>
                     </select>
                     <div>
                         {this.state.scene.settings()}

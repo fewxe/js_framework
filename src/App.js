@@ -1,11 +1,10 @@
-import Menu from './components/menu/Menu.js';
-import CalculatorComponent from './components/calculator/CalculatorComponent.js'
+import CalculatorComponent from './components/calculator/CalculatorComponent.js';
+import Essay from './components/essay/EssayComponent.js';
 import Graph3D from './components/graph3d/Graph3D.js';
+import Menu from './components/menu/Menu.js';
 
 
-function Essay() {
-  return <h2>essay</h2>;
-}
+
 
 function Graph2D() {
   return <h2>сегодня без графиков</h2>;
