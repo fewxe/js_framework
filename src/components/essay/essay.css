@@ -1,0 +1,18 @@
+.essay-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 24px 32px;
+  background: #809ec93a;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+.essay-container h2 {
+  color: #6dcde2;
+  margin-bottom: 18px;
+  font-size: 1.5em;
+}
+.essay-container p {
+  color: #333;
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
