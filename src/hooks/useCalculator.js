@@ -1,4 +1,4 @@
-import Calculator from '../../modules/calculator/calculators/Calculator.js';
+import Calculator from '../modules/calculator/calculators/Calculator.js';
 
 const useCalculator = (aRef, bRef, cRef) => {
     const calc = new Calculator();

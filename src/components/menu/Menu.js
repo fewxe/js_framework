@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 function Menu({ menu }) {
   const [activeContent, setActiveContent] = useState(null);

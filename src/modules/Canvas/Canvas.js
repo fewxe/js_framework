@@ -1,7 +1,7 @@
 export default class Canvas {
     constructor({ WIN, id = null, width = 600, height = 600, callbacks = {}, canvas }) {
         this.WIN = WIN;
-        this.canvas = canvas || document.getElementById(id);
+        this.canvas = canvas;
         this.canvas.width = width;
         this.canvas.height = height;
         this.context = this.canvas.getContext(`2d`);

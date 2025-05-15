@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import useCalculator from './useCalculator.js';
+import useCalculator from '../../hooks/useCalculator.js';
 
 const CalculatorComponent = () => {
     const aRef = useRef();
