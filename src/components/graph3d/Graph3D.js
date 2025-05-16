@@ -4,10 +4,19 @@ import Canvas from '../../modules/Canvas/Canvas.js';
 import Math3D from '../../modules/graph3d/Math3D.js';
 import Light from '../../modules/graph3d/Math3D/entities/Light.js';
 import Point from '../../modules/graph3d/Math3D/entities/Point.js';
+import Cone from '../../modules/graph3d/Math3D/figurs/cone.js';
 import Cube from '../../modules/graph3d/Math3D/figurs/Cube.js';
 import Cylinder from '../../modules/graph3d/Math3D/figurs/Cylinder.js';
+import Ellipsoid from '../../modules/graph3d/Math3D/figurs/ellipsoid.js';
+import EllipticalCylinder from '../../modules/graph3d/Math3D/figurs/ellipticalCylinder.js';
+import EllipticalParaboloid from '../../modules/graph3d/Math3D/figurs/ellipticalParaboloid.js';
+import HyperbolicCylinder from '../../modules/graph3d/Math3D/figurs/hyperboliccylinder.js';
+import HyperbolicParaboloid from '../../modules/graph3d/Math3D/figurs/hyperbolicParaboloid.js';
+import OneSheetedHyperboloid from '../../modules/graph3d/Math3D/figurs/oneSheetedHyperboloid.js';
+import ParabolicCylinder from '../../modules/graph3d/Math3D/figurs/paraboliccylinder.js';
 import Sphere from '../../modules/graph3d/Math3D/figurs/Sphere.js';
 import Torus from '../../modules/graph3d/Math3D/figurs/Torus.js';
+import TwoSheetedHyperboloid from '../../modules/graph3d/Math3D/figurs/twoSheetedHyperboloid.js';
 
 const WIN = {
   LEFT: -5,
@@ -24,7 +33,32 @@ const figuresMap = {
   cylinder: () => new Cylinder(),
   sphere: () => new Sphere(),
   torus: () => new Torus(),
+  ellipsoid: () => new Ellipsoid(),
+  cone: () => new Cone(),
+  paraboliccylinder: () => new ParabolicCylinder(),
+  hyperboliccylinder: () => new HyperbolicCylinder(),
+  ellipticalCylinder: () => new EllipticalCylinder(),
+  ellipticalParaboloid: () => new EllipticalParaboloid(),
+  oneSheetedHyperboloid: () => new OneSheetedHyperboloid(),
+  twoSheetedHyperboloid: () => new TwoSheetedHyperboloid(),
+  hyperbolicParaboloid: () => new HyperbolicParaboloid(),
 };
+
+const figureNames = [
+  { value: 'cube', label: 'Cube' },
+  { value: 'cylinder', label: 'Cylinder' },
+  { value: 'sphere', label: 'Sphere' },
+  { value: 'torus', label: 'Torus' },
+  { value: 'ellipsoid', label: 'Ellipsoid' },
+  { value: 'cone', label: 'Cone' },
+  { value: 'paraboliccylinder', label: 'Parabolic Cylinder' },
+  { value: 'hyperboliccylinder', label: 'Hyperbolic Cylinder' },
+  { value: 'ellipticalCylinder', label: 'Elliptical Cylinder' },
+  { value: 'ellipticalParaboloid', label: 'Elliptical Paraboloid' },
+  { value: 'oneSheetedHyperboloid', label: 'One-Sheeted Hyperboloid' },
+  { value: 'twoSheetedHyperboloid', label: 'Two-Sheeted Hyperboloid' },
+  { value: 'hyperbolicParaboloid', label: 'Hyperbolic Paraboloid' },
+];
 
 const Graph3D = () => {
   const [printPolygons, setPrintPolygons] = useState(true);
@@ -39,9 +73,12 @@ const Graph3D = () => {
   const moveRef = useRef({ canRotate: false, dx: 0, dy: 0 });
   const sceneRef = useRef(figuresMap[figureType]());
 
-  useEffect(() => {
-    sceneRef.current = figuresMap[figureType]();
-  }, [figureType]);
+  const [settingsHtml, setSettingsHtml] = useState('');
+
+    useEffect(() => {
+        sceneRef.current = figuresMap[figureType]();
+        setSettingsHtml(sceneRef.current.settings());
+    }, [figureType]);
 
   const handleMouseDown = e => {
     moveRef.current.canRotate = true;
@@ -197,12 +234,13 @@ const Graph3D = () => {
           value={figureType}
           onChange={e => setFigureType(e.target.value)}
         >
-          <option value="cube">Cube</option>
-          <option value="cylinder">Cylinder</option>
-          <option value="sphere">Sphere</option>
-          <option value="torus">Torus</option>
+          {figureNames.map(figure => (
+            <option key={figure.value} value={figure.value}>
+              {figure.label}
+            </option>
+          ))}
         </select>
-        <div>{sceneRef.current.settings()}</div>
+        <div>{settingsHtml}</div>
       </div>
     </div>
   );

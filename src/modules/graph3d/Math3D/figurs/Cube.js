@@ -1,7 +1,7 @@
 import Edge from "../entities/Edge.js";
+import Figure from "../entities/Figure.js";
 import Point from "../entities/Point.js";
 import Polygon from "../entities/Polygon.js";
-import Figure from "../entities/Figure.js";
 
 
 export default class Cube extends Figure {
