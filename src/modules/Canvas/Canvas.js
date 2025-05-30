@@ -10,6 +10,11 @@ export default class Canvas {
         this.canvas.addEventListener('mouseup', callbacks.mouseup);
         this.canvas.addEventListener('mousedown', callbacks.mousedown);
         this.canvas.addEventListener('mouseleave', callbacks.mouseleave);
+
+        this.virtualCanvas = document.createElement('canvas');
+        this.virtualCanvas.width = width;
+        this.virtualCanvas.height = height;
+        this.contextV = this.virtualCanvas.getContext(`2d`);
     }
 
     xs(x) {
@@ -27,62 +32,80 @@ export default class Canvas {
     }
 
     line(x1, y1, x2, y2, color, width) {
-        this.context.beginPath();
-        this.context.strokeStyle = color || 'black';
-        this.context.lineWidth = width || 4;
-        this.context.moveTo(this.xs(x1), this.ys(y1));
-        this.context.lineTo(this.xs(x2), this.ys(y2));
-        this.context.closePath();
-        this.context.stroke();
+        this.contextV.beginPath();
+        this.contextV.strokeStyle = color || 'black';
+        this.contextV.lineWidth = width || 4;
+        this.contextV.moveTo(this.xs(x1), this.ys(y1));
+        this.contextV.lineTo(this.xs(x2), this.ys(y2));
+        this.contextV.closePath();
+        this.contextV.stroke();
     }
 
     text(text, x, y, color) {
-        this.context.fillStyle = color || '#000';
-        this.context.font = '15px Arial';
-        this.context.fillText(text, this.xs(x), this.ys(y));
+        this.contextV.fillStyle = color || '#000';
+        this.contextV.font = '15px Arial';
+        this.contextV.fillText(text, this.xs(x), this.ys(y));
     }
 
     point(x, y, color = 'red', size = 4) {
-        this.context.beginPath();
-        this.context.strokeStyle = color;
-        this.context.fillStyle = color;
-        this.context.arc(this.xs(x), this.ys(y), size, 0, Math.PI * 2);
-        this.context.closePath();
-        this.context.stroke();
-        this.context.fill();
+        this.contextV.beginPath();
+        this.contextV.strokeStyle = color;
+        this.contextV.fillStyle = color;
+        this.contextV.arc(this.xs(x), this.ys(y), size, 0, Math.PI * 2);
+        this.contextV.closePath();
+        this.contextV.stroke();
+        this.contextV.fill();
     }
 
+    clearV() {
+        this.contextV.clearRect(0, 0, this.virtualCanvas.width, this.virtualCanvas.height);
+    }
     clear() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
     polygon(points = [], color = '#F805') {
-        this.context.beginPath();
-        this.context.strokeStyle = color;
-        this.context.fillStyle = color;
-        this.context.moveTo(this.xs(points[0].x), this.ys(points[0].y));
+        this.contextV.beginPath();
+        this.contextV.strokeStyle = color;
+        this.contextV.fillStyle = color;
+        this.contextV.moveTo(this.xs(points[0].x), this.ys(points[0].y));
         for (let i = 1; i < points.length; i++) {
-            this.context.lineTo(this.xs(points[i].x), this.ys(points[i].y));
+            this.contextV.lineTo(this.xs(points[i].x), this.ys(points[i].y));
         }
-        this.context.lineTo(this.xs(points[0].x), this.ys(points[0].y));
-        this.context.closePath();
-        this.context.fill();
+        this.contextV.lineTo(this.xs(points[0].x), this.ys(points[0].y));
+        this.contextV.closePath();
+        this.contextV.fill();
     }
 
     tablet(x, y, color = 'red', size = 2, reverse) {
-        this.context.beginPath();
-        this.context.strokeStyle = color;
-        this.context.fillStyle = color;
+        this.contextV.beginPath();
+        this.contextV.strokeStyle = color;
+        this.contextV.fillStyle = color;
         if (!reverse) {
-            this.context.arc(this.xs(x), this.ys(y) + size, size, 0, Math.PI);
-            this.context.arc(this.xs(x), this.ys(y) - size, size, Math.PI, Math.PI * 2);
+            this.contextV.arc(this.xs(x), this.ys(y) + size, size, 0, Math.PI);
+            this.contextV.arc(this.xs(x), this.ys(y) - size, size, Math.PI, Math.PI * 2);
         } else {
-            this.context.arc(this.xs(x) + size, this.ys(y), size, -Math.PI * 0.5, Math.PI * 0.5);
-            this.context.arc(this.xs(x) - size, this.ys(y), size, Math.PI * 0.5, -Math.PI * 0.5);
+            this.contextV.arc(this.xs(x) + size, this.ys(y), size, -Math.PI * 0.5, Math.PI * 0.5);
+            this.contextV.arc(this.xs(x) - size, this.ys(y), size, Math.PI * 0.5, -Math.PI * 0.5);
         }
-        this.context.closePath();
-        this.context.stroke();
-        this.context.fill();
+        this.contextV.closePath();
+        this.contextV.stroke();
+        this.contextV.fill();
     }
-    
+
+    drawTo() {
+        this.clear();
+        this.context.drawImage(
+            this.virtualCanvas,
+            0,
+            0,
+            this.virtualCanvas.width,
+            this.virtualCanvas.height,
+            0,
+            0,
+            this.canvas.width,
+            this.canvas.height
+        );
+        this.clearV();
+    }
 }

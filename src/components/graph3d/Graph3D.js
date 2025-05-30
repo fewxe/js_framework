@@ -19,8 +19,8 @@ const WIN = {
 
 
 const Graph3D = () => {
-  const mainCanvasRef = useRef(null);
-  const mainCanvasApiRef = useRef(null);
+  const canvasRef = useRef(null);
+  let canvas = null;
 
   const math3D = new Math3D({ WIN });
   const moveRef = useRef({ canRotate: false, dx: 0, dy: 0 });
@@ -65,16 +65,8 @@ const Graph3D = () => {
 
   const render = fps => {
     const figure = settings.figure;
-    if (!figure) return;
 
-    const virtualCanvas = document.createElement('canvas');
-    virtualCanvas.width = 700;
-    virtualCanvas.height = 700;
-
-    const virtualApi = new Canvas({ WIN, canvas: virtualCanvas, width: 700, height: 700 });
-
-    virtualApi.clear();
-    mainCanvasApiRef.current.clear();
+    canvas.clear();
 
     math3D.calcDistance(figure, WIN.CAMERA, 'distance');
     math3D.sortByArtistAlgorithm(figure.polygons);
@@ -94,7 +86,7 @@ const Graph3D = () => {
         );
         const lumen = math3D.calcIllumination(polygon.lumen, WIN.LIGHT.lumen * (isShadow ? dark : 1));
         const { r, g, b } = polygon.color;
-        virtualApi.polygon(
+        canvas.polygon(
           projected,
           polygon.rgbToHex(
             Math.round(r * lumen),
@@ -109,43 +101,33 @@ const Graph3D = () => {
       figure.edges.forEach(edge => {
         const p1 = figure.points[edge.p1];
         const p2 = figure.points[edge.p2];
-        virtualApi.line(math3D.xs(p1), math3D.ys(p1), math3D.xs(p2), math3D.ys(p2));
+        canvas.line(math3D.xs(p1), math3D.ys(p1), math3D.xs(p2), math3D.ys(p2));
       });
     }
 
     if (settings.printPoint) {
       figure.points.forEach(p =>
-        virtualApi.point(math3D.xs(p), math3D.ys(p))
+        canvas.point(math3D.xs(p), math3D.ys(p))
       );
     }
-
-    mainCanvasApiRef.current.context.drawImage(
-      virtualCanvas,
-      0,
-      0,
-      virtualCanvas.width,
-      virtualCanvas.height,
-      0,
-      0,
-      mainCanvasApiRef.current.canvas.width,
-      mainCanvasApiRef.current.canvas.height
-    );
-
-    mainCanvasApiRef.current.text(
+    
+    canvas.text(
       `FPS: ${fps}`,
       WIN.LEFT,
       WIN.BOTTOM + WIN.HEIGHT - 1,
       'red'
     );
+
+    canvas.drawTo();
   };
 
   const [startRender] = useCanvas(render);
 
   useEffect(() => {
-    if (!mainCanvasApiRef.current && mainCanvasRef.current) {
-      mainCanvasApiRef.current = new Canvas({
+    if (canvasRef.current && !canvas) {
+      canvas = new Canvas({
         WIN,
-        canvas: mainCanvasRef.current,
+        canvas: canvasRef.current,
         width: 700,
         height: 700,
         callbacks: {
@@ -162,7 +144,7 @@ const Graph3D = () => {
 
   return (
     <div>
-      <canvas ref={mainCanvasRef} width="700" height="700" />
+      <canvas ref={canvasRef} width="700" height="700" />
       <UI3D settings={settings}/>
     </div>
   );
