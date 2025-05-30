@@ -1,3 +1,5 @@
+import Point from "./Math3D/entities/Point.js";
+
 export default class Math3D {
     constructor({ WIN }) {
         this.WIN = WIN;
@@ -77,8 +79,9 @@ export default class Math3D {
         point.x=array[0];
         point.y=array[1];
         point.z=array[2];
-}
-calcDistance(figure, camera, name) {
+    }  
+     
+    calcDistance(figure, camera, name) {
         figure.polygons.forEach(polygon => {
             let x = 0, y = 0, z = 0;
             polygon.points.forEach(index => {
@@ -98,7 +101,7 @@ calcDistance(figure, camera, name) {
     }
 
     sortByArtistAlgorithm(polygons) {
-        polygons.sort((a, b) => b.distance - a.distance);
+        return polygons.sort((a, b) => b.distance - a.distance);
     }
 
     calcIllumination(distance, lumen) {
@@ -107,7 +110,7 @@ calcDistance(figure, camera, name) {
     }
 
     calcShadow(polygon, scene, LIGHT) {
-        if (!polygon?.center || !LIGHT) return { isShadow: false };
+        if (!polygon?.center || !LIGHT) console.log("пиздец")
         
         const M1 = polygon.center;
         const r = polygon.R * 1.2;
@@ -133,4 +136,51 @@ calcDistance(figure, camera, name) {
         return { isShadow: false };
     }
 
+    calcVector(a, b) {
+        if (!a || !b) return { x: 0, y: 0, z: 0 };
+        return {
+            x: b.x - a.x,
+            y: b.y - a.y,
+            z: b.z - a.z
+        };
+    }
+
+    vectorProd(a, b) {
+        return {
+            x: a.y * b.z - a.z * b.y,
+            y: a.z * b.x - a.x * b.z,
+            z: a.x * b.y - a.y * b.x
+        };
+    }
+
+    calcVectorModule(v) {
+        return Math.sqrt(v.x ** 2 + v.y ** 2 + v.z ** 2);
+    }
+
+    calcRadius(figure) {
+        figure.polygons.forEach(polygon => {
+            let points = polygon.points.map(index => figure.points[index]);
+            if (points.some(p => !p)) return;
+
+            if (!polygon.center) {
+                const center = new Point(0, 0, 0);
+                points.forEach(p => {
+                    center.x += p.x;
+                    center.y += p.y;
+                    center.z += p.z;
+                });
+                center.x /= points.length;
+                center.y /= points.length;
+                center.z /= points.length;
+                polygon.center = center;
+            }
+
+            const center = polygon.center;
+            let total = 0;
+            points.forEach(point => {
+                total += this.calcVectorModule(this.calcVector(center, point));
+            });
+            polygon.R = total / points.length;
+        });
+    }
 }

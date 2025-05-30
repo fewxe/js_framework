@@ -7,20 +7,19 @@ import Point from '../../modules/graph3d/Math3D/entities/Point.js';
 import Cube from '../../modules/graph3d/Math3D/figurs/Cube.js';
 import UI3D from './UI3D/UI3D.js';
 
-const WIN = {
-  LEFT: -5,
-  BOTTOM: -5,
-  WIDTH: 10,
-  HEIGHT: 10, 
-  CENTER: new Point(0, 0, 30),
-  CAMERA: new Point(0, 0, 50),
-  LIGHT: new Light(-40, 5, 10, 25000),
-};
-
-
 const Graph3D = () => {
   const canvasRef = useRef(null);
   let canvas = null;
+
+  const WIN = {
+    LEFT: -5,
+    BOTTOM: -5,
+    WIDTH: 10,
+    HEIGHT: 10, 
+    CENTER: new Point(0, 0, 30),
+    CAMERA: new Point(0, 0, 50),
+    LIGHT: new Light(-40, 5, 10, 25000),
+  };
 
   const math3D = new Math3D({ WIN });
   const moveRef = useRef({ canRotate: false, dx: 0, dy: 0 });
@@ -29,7 +28,7 @@ const Graph3D = () => {
     printPolygons: true,
     printPoint: true,
     printEdges: true,
-    figure: new Cube(),
+    figures: [new Cube()],
   }
 
   const handleMouseDown = e => {
@@ -49,9 +48,11 @@ const Graph3D = () => {
     const dy = e.offsetY;
     const grad = Math.PI / 180 / 5;
 
-    settings.figure.points.forEach(p => {
-      math3D.rotateOy(-(moveRef.current.dx - dx) * grad, p);
-      math3D.rotateOx(-(moveRef.current.dy - dy) * grad, p);
+    settings.figures.forEach(figure => {
+      figure.points.forEach(p => {
+        math3D.rotateOy(-(moveRef.current.dx - dx) * grad, p);
+        math3D.rotateOx(-(moveRef.current.dy - dy) * grad, p);
+      });
     });
 
     moveRef.current.dx = dx;
@@ -60,62 +61,84 @@ const Graph3D = () => {
 
   const handleWheel = e => {
     const delta = e.deltaY < 0 ? 1.1 : 0.9;
-    settings.figure.current.points.forEach(p => math3D.zoom(delta, p));
+    settings.figures.forEach(figure => {
+      figure.points.forEach(p => math3D.zoom(delta, p));
+    });
   };
 
   const render = fps => {
-    const figure = settings.figure;
+    console.log(WIN.LIGHT.lumen);
 
     canvas.clear();
 
-    math3D.calcDistance(figure, WIN.CAMERA, 'distance');
-    math3D.sortByArtistAlgorithm(figure.polygons);
-    math3D.calcDistance(figure, WIN.LIGHT, 'lumen');
+    settings.figures.forEach(figure => {
+        math3D.calcDistance(figure, WIN.CAMERA, 'distance');
+        math3D.calcDistance(figure, WIN.LIGHT, 'lumen');
+    });
 
-    if (settings.printPolygons) {
-      settings.figure.polygons.forEach(polygon => {
-        const points = polygon.points.map(i => figure.points[i]);
-        const projected = points.map(p => ({
-          x: math3D.xs(p),
-          y: math3D.ys(p),
-        }));
-        const { isShadow, dark } = math3D.calcShadow(
-          polygon, 
-          settings.figure, 
-          WIN.LIGHT
-        );
-        const lumen = math3D.calcIllumination(polygon.lumen, WIN.LIGHT.lumen * (isShadow ? dark : 1));
-        const { r, g, b } = polygon.color;
-        canvas.polygon(
-          projected,
-          polygon.rgbToHex(
-            Math.round(r * lumen),
-            Math.round(g * lumen),
-            Math.round(b * lumen)
-          )
-        );
-      });
+    let allPolygons = [];
+    settings.figures.forEach(figure => {
+        figure.polygons.forEach(polygon => {
+            allPolygons.push({ polygon, figure });
+        });
+    });
+
+    // Получаем отсортированный массив полигонов
+    const sortedPolygons = math3D.sortByArtistAlgorithm(allPolygons.map(obj => obj.polygon));
+
+    // Перестраиваем allPolygons в порядке сортировки
+    allPolygons = sortedPolygons.map(polygon =>
+        allPolygons.find(obj => obj.polygon === polygon)
+    );
+
+    if (settings.printPolygons) { 
+        allPolygons.forEach(({ polygon, figure }) => {
+            const points = polygon.points.map(i => figure.points[i]);
+            const projected = points.map(p => ({
+                x: math3D.xs(p),
+                y: math3D.ys(p),
+            }));
+            const { isShadow, dark } = math3D.calcShadow(
+                polygon,
+                settings.figures,
+                WIN.LIGHT
+            );
+            const lumen = math3D.calcIllumination(polygon.lumen, WIN.LIGHT.lumen * (isShadow ? dark : 1));
+            const { r, g, b } = polygon.color;
+            canvas.polygon(
+                projected,
+                polygon.rgbToHex(
+                    Math.round(r * lumen),
+                    Math.round(g * lumen),
+                    Math.round(b * lumen)
+                )
+            );
+        });
     }
 
     if (settings.printEdges) {
-      figure.edges.forEach(edge => {
-        const p1 = figure.points[edge.p1];
-        const p2 = figure.points[edge.p2];
-        canvas.line(math3D.xs(p1), math3D.ys(p1), math3D.xs(p2), math3D.ys(p2));
-      });
+        settings.figures.forEach(figure => {
+            figure.edges.forEach(edge => {
+                const p1 = figure.points[edge.p1];
+                const p2 = figure.points[edge.p2];
+                canvas.line(math3D.xs(p1), math3D.ys(p1), math3D.xs(p2), math3D.ys(p2));
+            });
+        });
     }
 
     if (settings.printPoint) {
-      figure.points.forEach(p =>
-        canvas.point(math3D.xs(p), math3D.ys(p))
-      );
+        settings.figures.forEach(figure => {
+            figure.points.forEach(p =>
+                canvas.point(math3D.xs(p), math3D.ys(p))
+            );
+        });
     }
-    
+
     canvas.text(
-      `FPS: ${fps}`,
-      WIN.LEFT,
-      WIN.BOTTOM + WIN.HEIGHT - 1,
-      'red'
+        `FPS: ${fps}`,
+        WIN.LEFT,
+        WIN.BOTTOM + WIN.HEIGHT - 1,
+        'red'
     );
 
     canvas.drawTo();
@@ -145,7 +168,7 @@ const Graph3D = () => {
   return (
     <div>
       <canvas ref={canvasRef} width="700" height="700" />
-      <UI3D settings={settings}/>
+      <UI3D settings={settings} WIN={WIN}/>
     </div>
   );
 };

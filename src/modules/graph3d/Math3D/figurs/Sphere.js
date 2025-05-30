@@ -1,6 +1,6 @@
+import Edge from '../entities/Edge.js';
 import Point from '../entities/Point.js';
 import Polygon from '../entities/Polygon.js';
-import Edge from '../entities/Edge.js';
 
 
 export default class Sphere {
@@ -67,7 +67,7 @@ export default class Sphere {
     generatePolygons(count) {
         for (let i = 0; i < this.points.length - count - 2; i++) {
             if (i % (count + 1) !== count) {
-                this.polygons.push(new Polygon([i, i + 1, i + count + 2, i + count + 1]));
+                this.polygons.push(new Polygon([i, i + 1, i + count + 2, i + count + 1], { r: 128, g: 0, b: 0 }));
             }
         }
     }
