@@ -79,23 +79,21 @@ export default class Math3D {
         point.z=array[2];
 }
 calcDistance(figure, camera, name) {
-    figure.polygons.forEach(polygon => {
-        let x = 0, y = 0, z = 0;
-        polygon.points.forEach(index => {
-            x += figure.points[index].x;
-            y += figure.points[index].y;
-            z += figure.points[index].z;
-        });
-
-        x /= polygon.points.length;
-        y /= polygon.points.length;
-        z /= polygon.points.length;
-
-        polygon[name] = Math.sqrt(
-            (camera.x - x) ** 2 +
-            (camera.y - y) ** 2 +
-            (camera.z - z) ** 2
-        );
+        figure.polygons.forEach(polygon => {
+            let x = 0, y = 0, z = 0;
+            polygon.points.forEach(index => {
+                x += figure.points[index].x;
+                y += figure.points[index].y;
+                z += figure.points[index].z;
+            });
+            x /= polygon.points.length;
+            y /= polygon.points.length;
+            z /= polygon.points.length;
+            polygon[name] = Math.sqrt(
+                (camera.x - x) ** 2 +
+                (camera.y - y) ** 2 +
+                (camera.z - z) ** 2
+            );
         });
     }
 
@@ -103,9 +101,36 @@ calcDistance(figure, camera, name) {
         polygons.sort((a, b) => b.distance - a.distance);
     }
 
-    calcIllumination(distance, lumen){
-        const illum=distance?lumen/distance**3:1;
-        return illum>1?1:illum;
+    calcIllumination(distance, lumen) {
+        const illum = distance ? lumen / distance ** 3 : 1;
+        return illum > 1 ? 1 : illum;
+    }
+
+    calcShadow(polygon, scene, LIGHT) {
+        if (!polygon?.center || !LIGHT) return { isShadow: false };
+        
+        const M1 = polygon.center;
+        const r = polygon.R * 1.2;
+        const S = this.calcVector(M1, LIGHT);
+
+        for (let figure of scene) {
+            if (!figure.polygons) continue;
+            for (let poly of figure.polygons) {
+                if (!poly?.center || poly === polygon) continue;
+                const M0 = poly.center;
+                const dark = this.calcVectorModule(
+                    this.vectorProd(
+                        this.calcVector(M0, M1),
+                        S
+                    )
+                ) / this.calcVectorModule(S);
+                
+                if (dark < r) {
+                    return { isShadow: true, dark: dark / (r * 0.8) };
+                }
+            }
+        }
+        return { isShadow: false };
     }
 
 }

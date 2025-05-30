@@ -87,7 +87,12 @@ const Graph3D = () => {
           x: math3D.xs(p),
           y: math3D.ys(p),
         }));
-        const lumen = math3D.calcIllumination(polygon.lumen, WIN.LIGHT.lumen);
+        const { isShadow, dark } = math3D.calcShadow(
+          polygon, 
+          settings.figure, 
+          WIN.LIGHT
+        );
+        const lumen = math3D.calcIllumination(polygon.lumen, WIN.LIGHT.lumen * (isShadow ? dark : 1));
         const { r, g, b } = polygon.color;
         virtualApi.polygon(
           projected,
