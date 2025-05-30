@@ -67,15 +67,16 @@ const Graph3D = () => {
   };
 
   const render = fps => {
-    console.log(WIN.LIGHT.lumen);
-
     canvas.clear();
 
+    // 1. Считаем центры и радиусы для всех полигонов всех фигур (нужно для теней)
     settings.figures.forEach(figure => {
+        math3D.calcRadius(figure);
         math3D.calcDistance(figure, WIN.CAMERA, 'distance');
         math3D.calcDistance(figure, WIN.LIGHT, 'lumen');
     });
 
+    // 2. Собираем все полигоны всех фигур в один массив с привязкой к фигуре
     let allPolygons = [];
     settings.figures.forEach(figure => {
         figure.polygons.forEach(polygon => {
@@ -83,14 +84,13 @@ const Graph3D = () => {
         });
     });
 
-    // Получаем отсортированный массив полигонов
+    // 3. Сортируем полигоны по алгоритму художника
     const sortedPolygons = math3D.sortByArtistAlgorithm(allPolygons.map(obj => obj.polygon));
-
-    // Перестраиваем allPolygons в порядке сортировки
     allPolygons = sortedPolygons.map(polygon =>
         allPolygons.find(obj => obj.polygon === polygon)
     );
 
+    // 4. Отрисовываем полигоны с учётом теней
     if (settings.printPolygons) { 
         allPolygons.forEach(({ polygon, figure }) => {
             const points = polygon.points.map(i => figure.points[i]);
@@ -103,7 +103,10 @@ const Graph3D = () => {
                 settings.figures,
                 WIN.LIGHT
             );
-            const lumen = math3D.calcIllumination(polygon.lumen, WIN.LIGHT.lumen * (isShadow ? dark : 1));
+            const lumen = math3D.calcIllumination(
+                polygon.lumen,
+                WIN.LIGHT.lumen * (isShadow ? dark : 1)
+            );
             const { r, g, b } = polygon.color;
             canvas.polygon(
                 projected,
@@ -116,6 +119,7 @@ const Graph3D = () => {
         });
     }
 
+    // 5. Отрисовываем рёбра
     if (settings.printEdges) {
         settings.figures.forEach(figure => {
             figure.edges.forEach(edge => {
@@ -126,6 +130,7 @@ const Graph3D = () => {
         });
     }
 
+    // 6. Отрисовываем точки
     if (settings.printPoint) {
         settings.figures.forEach(figure => {
             figure.points.forEach(p =>

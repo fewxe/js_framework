@@ -110,26 +110,31 @@ export default class Math3D {
     }
 
     calcShadow(polygon, scene, LIGHT) {
-        if (!polygon?.center || !LIGHT) console.log("пиздец")
-        
-        const M1 = polygon.center;
-        const r = polygon.R * 1.2;
-        const S = this.calcVector(M1, LIGHT);
+        if (!polygon?.center || !LIGHT) return { isShadow: false };
+
+        const toLight = this.calcVector(polygon.center, LIGHT);
+        const toLightLen = this.calcVectorModule(toLight);
 
         for (let figure of scene) {
             if (!figure.polygons) continue;
             for (let poly of figure.polygons) {
                 if (!poly?.center || poly === polygon) continue;
-                const M0 = poly.center;
-                const dark = this.calcVectorModule(
-                    this.vectorProd(
-                        this.calcVector(M0, M1),
-                        S
-                    )
-                ) / this.calcVectorModule(S);
-                
-                if (dark < r) {
-                    return { isShadow: true, dark: dark / (r * 0.8) };
+
+                const polyToLight = this.calcVector(poly.center, LIGHT);
+                const polyToLightLen = this.calcVectorModule(polyToLight);
+
+                const dot = (
+                    toLight.x * polyToLight.x +
+                    toLight.y * polyToLight.y +
+                    toLight.z * polyToLight.z
+                ) / (toLightLen * polyToLightLen);
+
+                if (dot > 0.999 && polyToLightLen < toLightLen) {
+                    const dist = this.calcVectorModule(this.calcVector(polygon.center, poly.center));
+                    const rSum = (polygon.R || 0) + (poly.R || 0);
+                    if (dist < rSum * 1.1) {
+                        return { isShadow: true, dark: 0.5 };
+                    }
                 }
             }
         }
@@ -157,25 +162,22 @@ export default class Math3D {
         return Math.sqrt(v.x ** 2 + v.y ** 2 + v.z ** 2);
     }
 
-    calcRadius(figure) {
+    calcRadius(figure, recalcRadius = false) {
         figure.polygons.forEach(polygon => {
             let points = polygon.points.map(index => figure.points[index]);
             if (points.some(p => !p)) return;
 
-            if (!polygon.center) {
-                const center = new Point(0, 0, 0);
-                points.forEach(p => {
-                    center.x += p.x;
-                    center.y += p.y;
-                    center.z += p.z;
-                });
-                center.x /= points.length;
-                center.y /= points.length;
-                center.z /= points.length;
-                polygon.center = center;
-            }
+            const center = new Point(0, 0, 0);
+            points.forEach(p => {
+                center.x += p.x;
+                center.y += p.y;
+                center.z += p.z;
+            });
+            center.x /= points.length;
+            center.y /= points.length;
+            center.z /= points.length;
+            polygon.center = center;
 
-            const center = polygon.center;
             let total = 0;
             points.forEach(point => {
                 total += this.calcVectorModule(this.calcVector(center, point));
