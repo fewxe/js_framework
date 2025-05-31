@@ -5,10 +5,10 @@ import Polygon from "../entities/Polygon.js";
 
 
 export default class Cube extends Figure {
-    constructor(size = 5) {
-        super();
+    constructor(origin, size = 5) {
+        super(origin);
         this._size = size;
-        this.points = [];
+        this.localPoints = [];
         this.edges = [];
         this.polygons = [];
         this.updateGeometry();
@@ -25,14 +25,14 @@ export default class Cube extends Figure {
 
     updateGeometry() {
         const size = this._size;
-        this.points = [
-            new Point(-size, size, size),
-            new Point(size, size, size),
-            new Point(size, -size, size),
-            new Point(-size, -size, size),
-            new Point(-size, size, -size),
-            new Point(size, size, -size),
-            new Point(size, -size, -size),
+        this.localPoints = [
+            new Point(-size,  size,  size),
+            new Point( size,  size,  size),
+            new Point( size, -size,  size),
+            new Point(-size, -size,  size),
+            new Point(-size,  size, -size),
+            new Point( size,  size, -size),
+            new Point( size, -size, -size),
             new Point(-size, -size, -size)
         ];
         this.edges = [
@@ -66,7 +66,7 @@ export default class Cube extends Figure {
                     Размер:
                     <input
                         type="number"
-                        defaultValue={this.size}
+                        defaultChecked={this.size}
                         onChange={(e) => {
                             this.size = parseInt(e.target.value);
                         }}

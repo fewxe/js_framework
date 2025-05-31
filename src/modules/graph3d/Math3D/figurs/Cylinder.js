@@ -1,16 +1,16 @@
 import Edge from "../entities/Edge.js";
+import Figure from "../entities/Figure.js";
 import Point from "../entities/Point.js";
 import Polygon from "../entities/Polygon.js";
-import Figure from "../entities/Figure.js";
 
 
 export default class Cylinder extends Figure {
-    constructor(segments = 60, height = 5, radius = 5) {
-        super();
+    constructor(origin = new Point(0, 0, 0), segments = 60, height = 5, radius = 5) {
+        super(origin);
         this._segments = segments;
         this._height = height;
         this._radius = radius;
-        this.points = [];
+        this.localPoints = [];
         this.edges = [];
         this.polygons = [];
         this.updateGeometry();
@@ -44,29 +44,22 @@ export default class Cylinder extends Figure {
     }
 
     updateGeometry() {
-        this.points = [];
+        this.localPoints = [];
         this.edges = [];
         this.polygons = [];
-        this.generatePoints();
-        this.generateEdges();
-        this.generatePolygons();
-    }
-
-    generatePoints() {
         const angleStep = (2 * Math.PI) / this._segments;
+        // Верх и низ
         for (let level = -this._height; level <= this._height; level += this._height * 2) {
             for (let i = 0; i < this._segments; i++) {
                 const angle = angleStep * i;
-                this.points.push(new Point(
+                this.localPoints.push(new Point(
                     this._radius * Math.cos(angle),
                     this._radius * Math.sin(angle),
                     level
                 ));
             }
         }
-    }
-
-    generateEdges() {
+        // Рёбра боковой поверхности
         for (let i = 0; i < this._segments; i++) {
             this.edges.push(new Edge(i, (i + 1) % this._segments));
             this.edges.push(new Edge(
@@ -74,12 +67,11 @@ export default class Cylinder extends Figure {
                 ((i + 1) % this._segments) + this._segments
             ));
         }
+        // Рёбра между верхом и низом
         for (let i = 0; i < this._segments; i++) {
             this.edges.push(new Edge(i, i + this._segments));
         }
-    }
-
-    generatePolygons() {
+        // Боковые полигоны
         for (let i = 0; i < this._segments; i++) {
             const next = (i + 1) % this._segments;
             this.polygons.push(new Polygon([
@@ -89,6 +81,7 @@ export default class Cylinder extends Figure {
                 i + this._segments
             ]));
         }
+        // Верх и низ
         this.polygons.push(new Polygon(
             Array.from({ length: this._segments }, (_, i) => i)
         ));
@@ -105,9 +98,7 @@ export default class Cylinder extends Figure {
                     <input
                         type="number"
                         defaultValue={this.radius}
-                        onChange={(e) => {
-                            this.radius = parseFloat(e.target.value);
-                        }}
+                        onChange={e => { this.radius = parseFloat(e.target.value); }}
                     />
                 </label>
                 <label>
@@ -115,9 +106,7 @@ export default class Cylinder extends Figure {
                     <input
                         type="number"
                         defaultValue={this.height}
-                        onChange={(e) => {
-                            this.height = parseFloat(e.target.value);
-                        }}
+                        onChange={e => { this.height = parseFloat(e.target.value); }}
                     />
                 </label>
                 <label>
@@ -125,9 +114,7 @@ export default class Cylinder extends Figure {
                     <input
                         type="number"
                         defaultValue={this.segments}
-                        onChange={(e) => {
-                            this.segments = parseInt(e.target.value, 10);
-                        }}
+                        onChange={e => { this.segments = parseInt(e.target.value, 10); }}
                     />
                 </label>
             </div>

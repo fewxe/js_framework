@@ -1,18 +1,20 @@
 import Edge from '../entities/Edge.js';
+import Figure from '../entities/Figure.js';
 import Point from '../entities/Point.js';
 import Polygon from '../entities/Polygon.js';
 
-export default class HyperbolicCylinder {
-    constructor(count = 10) {
+export default class HyperbolicCylinder extends Figure {
+    constructor(origin = new Point(0, 0, 0), count = 10) {
+        super(origin);
         this.count = count;
-        this.points = [];
+        this.localPoints = [];
         this.edges = [];
         this.polygons = [];
         this.updateGeometry();
     }
 
     updateGeometry() {
-        this.points = [];
+        this.localPoints = [];
         this.edges = [];
         this.polygons = [];
         let size = 5;
@@ -21,7 +23,7 @@ export default class HyperbolicCylinder {
                 const x = i + size / this.count;
                 const y = x * x / size;
                 const z = j - size;
-                this.points.push(new Point(x, y, z));
+                this.localPoints.push(new Point(x, y, z));
             }
         }
         size = -5;
@@ -30,40 +32,40 @@ export default class HyperbolicCylinder {
                 const x = i - size / this.count;
                 const y = x * x / size;
                 const z = j + size;
-                this.points.push(new Point(x, y, z));
+                this.localPoints.push(new Point(x, y, z));
             }
         }
-        for (let i = 0; i < this.points.length / 2 - this.count; i++) {
-            if (i + 1 < this.points.length && (i + 1) % this.count !== 0) {
+        for (let i = 0; i < this.localPoints.length / 2 - this.count; i++) {
+            if (i + 1 < this.localPoints.length && (i + 1) % this.count !== 0) {
                 this.edges.push(new Edge(i, i + 1));
             } else if ((i + 1) % this.count === 0) {
                 this.edges.push(new Edge(i, i + 1 - this.count));
             }
-            if (i < this.points.length - this.count) {
+            if (i < this.localPoints.length - this.count) {
                 this.edges.push(new Edge(i, i + this.count));
             }
         }
-        for (let i = this.points.length / 2; i < this.points.length; i++) {
-            if (i + 1 < this.points.length && (i + 1) % this.count !== 0) {
+        for (let i = this.localPoints.length / 2; i < this.localPoints.length; i++) {
+            if (i + 1 < this.localPoints.length && (i + 1) % this.count !== 0) {
                 this.edges.push(new Edge(i, i + 1));
             } else if ((i + 1) % this.count === 0) {
                 this.edges.push(new Edge(i, i + 1 - this.count));
             }
-            if (i < this.points.length - this.count) {
+            if (i < this.localPoints.length - this.count) {
                 this.edges.push(new Edge(i, i + this.count));
             }
         }
-        for (let i = 0; i < this.points.length / 2 - this.count; i++) {
-            if (i + 1 + this.count < this.points.length && (i + 1) % this.count !== 0) {
+        for (let i = 0; i < this.localPoints.length / 2 - this.count; i++) {
+            if (i + 1 + this.count < this.localPoints.length && (i + 1) % this.count !== 0) {
                 this.polygons.push(new Polygon([i, i + 1, i + 1 + this.count, i + this.count]));
-            } else if (i + this.count < this.points.length && (i + 1) % this.count === 0) {
+            } else if (i + this.count < this.localPoints.length && (i + 1) % this.count === 0) {
                 this.polygons.push(new Polygon([i, i + 1 - this.count, i + 1, i + this.count]));
             }
         }
-        for (let i = this.points.length / 2 + this.count / 2; i < this.points.length; i++) {
-            if (i + 1 + this.count < this.points.length && (i + 1) % this.count !== 0) {
+        for (let i = this.localPoints.length / 2 + this.count / 2; i < this.localPoints.length; i++) {
+            if (i + 1 + this.count < this.localPoints.length && (i + 1) % this.count !== 0) {
                 this.polygons.push(new Polygon([i, i + 1, i + 1 + this.count, i + this.count]));
-            } else if (i + this.count < this.points.length && (i + 1) % this.count === 0) {
+            } else if (i + this.count < this.localPoints.length && (i + 1) % this.count === 0) {
                 this.polygons.push(new Polygon([i, i + 1 - this.count, i + 1, i + this.count]));
             }
         }

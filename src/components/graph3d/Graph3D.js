@@ -49,7 +49,7 @@ const Graph3D = () => {
     const grad = Math.PI / 180 / 5;
 
     settings.figures.forEach(figure => {
-      figure.points.forEach(p => {
+      figure.localPoints.forEach(p => {
         math3D.rotateOy(-(moveRef.current.dx - dx) * grad, p);
         math3D.rotateOx(-(moveRef.current.dy - dy) * grad, p);
       });
@@ -62,7 +62,7 @@ const Graph3D = () => {
   const handleWheel = e => {
     const delta = e.deltaY < 0 ? 1.1 : 0.9;
     settings.figures.forEach(figure => {
-      figure.points.forEach(p => math3D.zoom(delta, p));
+      figure.localPoints.forEach(p => math3D.zoom(delta, p));
     });
   };
 

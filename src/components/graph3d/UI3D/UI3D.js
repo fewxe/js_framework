@@ -45,27 +45,39 @@ const figureNames = [
   { value: 'hyperbolicParaboloid', label: 'Hyperbolic Paraboloid' },
 ];
 
-
 const UI3D = ({ settings, WIN }) => {
     const [selectedFigure, setSelectedFigure] = useState('cube');
     const [selectedIndex, setSelectedIndex] = useState(0);
+    const [, forceUpdate] = useState({});
 
     const handleAddFigure = () => {
         const newFigure = figuresMap[selectedFigure]();
         settings.figures.push(newFigure);
         setSelectedIndex(settings.figures.length - 1);
+        forceUpdate({});
     };
 
     const handleRemoveFigure = () => {
         if (settings.figures.length > 0) {
             settings.figures.splice(selectedIndex, 1);
             setSelectedIndex(Math.max(0, selectedIndex - 1));
+            forceUpdate({});
         }
     };
 
     const handleSelectFigure = (e) => {
         setSelectedIndex(Number(e.target.value));
     };
+
+    const handleOriginChange = (axis, value) => {
+        const fig = settings.figures[selectedIndex];
+        if (fig) {
+            fig.origin[axis] = parseFloat(value) || 0;
+            forceUpdate({});
+        }
+    };
+
+    const selectedFig = settings.figures[selectedIndex];
 
     return (
         <div>
@@ -107,7 +119,7 @@ const UI3D = ({ settings, WIN }) => {
                 <button onClick={handleAddFigure}>Добавить фигуру</button>
             </div>
             <div>
-                <label>Выбрать фигуру:&nbsp;
+                <label>Выбрать фигуру:
                     <select value={selectedIndex} onChange={handleSelectFigure}>
                         {settings.figures.map((fig, idx) => (
                             <option key={idx} value={idx}>
@@ -118,11 +130,39 @@ const UI3D = ({ settings, WIN }) => {
                     <button onClick={handleRemoveFigure} disabled={settings.figures.length === 0}>Удалить</button>
                 </label>
             </div>
+            {selectedFig && (
+                <div>
+                    <label>
+                        X:
+                        <input
+                            type="number"
+                            value={selectedFig.origin.x}
+                            onChange={e => handleOriginChange('x', e.target.value)}
+                        />
+                    </label>
+                    <label>
+                        Y:
+                        <input
+                            type="number"
+                            value={selectedFig.origin.y}
+                            onChange={e => handleOriginChange('y', e.target.value)}
+                        />
+                    </label>
+                    <label>
+                        Z:
+                        <input
+                            type="number"
+                            value={selectedFig.origin.z}
+                            onChange={e => handleOriginChange('z', e.target.value)}
+                        />
+                    </label>
+                </div>
+            )}
             <label>
                 <input
                     type="range"
                     min="0"
-                    max="1750000"
+                    max="50000"
                     step="1"
                     defaultValue={WIN.LIGHT.lumen}
                     onChange={e => { WIN.LIGHT.lumen = e.target.value }}
@@ -130,8 +170,8 @@ const UI3D = ({ settings, WIN }) => {
                 Свет
             </label>
             <div>
-                {settings.figures[selectedIndex] && settings.figures[selectedIndex].settings
-                    ? settings.figures[selectedIndex].settings()
+                {selectedFig && selectedFig.settings
+                    ? selectedFig.settings()
                     : null}
             </div>
         </div>
