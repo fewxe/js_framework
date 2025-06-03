@@ -49,7 +49,7 @@ const Graph3D = () => {
     const grad = Math.PI / 180 / 5;
 
     settings.figures.forEach(figure => {
-      figure.localPoints.forEach(p => {
+      figure.points.forEach(p => {
         math3D.rotateOy(-(moveRef.current.dx - dx) * grad, p);
         math3D.rotateOx(-(moveRef.current.dy - dy) * grad, p);
       });
@@ -62,21 +62,19 @@ const Graph3D = () => {
   const handleWheel = e => {
     const delta = e.deltaY < 0 ? 1.1 : 0.9;
     settings.figures.forEach(figure => {
-      figure.localPoints.forEach(p => math3D.zoom(delta, p));
+      figure.points.forEach(p => math3D.zoom(delta, p));
     });
   };
 
   const render = fps => {
     canvas.clear();
 
-    // 1. Считаем центры и радиусы для всех полигонов всех фигур (нужно для теней)
     settings.figures.forEach(figure => {
         math3D.calcRadius(figure);
         math3D.calcDistance(figure, WIN.CAMERA, 'distance');
         math3D.calcDistance(figure, WIN.LIGHT, 'lumen');
     });
 
-    // 2. Собираем все полигоны всех фигур в один массив с привязкой к фигуре
     let allPolygons = [];
     settings.figures.forEach(figure => {
         figure.polygons.forEach(polygon => {
@@ -84,16 +82,14 @@ const Graph3D = () => {
         });
     });
 
-    // 3. Сортируем полигоны по алгоритму художника
     const sortedPolygons = math3D.sortByArtistAlgorithm(allPolygons.map(obj => obj.polygon));
     allPolygons = sortedPolygons.map(polygon =>
         allPolygons.find(obj => obj.polygon === polygon)
     );
 
-    // 4. Отрисовываем полигоны с учётом теней
     if (settings.printPolygons) { 
         allPolygons.forEach(({ polygon, figure }) => {
-            const points = polygon.points.map(i => figure.points[i]);
+            const points = polygon.points.map(i => figure.points[i].add(figure.origin));
             const projected = points.map(p => ({
                 x: math3D.xs(p),
                 y: math3D.ys(p),
@@ -119,22 +115,20 @@ const Graph3D = () => {
         });
     }
 
-    // 5. Отрисовываем рёбра
     if (settings.printEdges) {
         settings.figures.forEach(figure => {
             figure.edges.forEach(edge => {
-                const p1 = figure.points[edge.p1];
-                const p2 = figure.points[edge.p2];
+                const p1 = figure.points[edge.p1].add(figure.origin);
+                const p2 = figure.points[edge.p2].add(figure.origin);
                 canvas.line(math3D.xs(p1), math3D.ys(p1), math3D.xs(p2), math3D.ys(p2));
             });
         });
     }
 
-    // 6. Отрисовываем точки
     if (settings.printPoint) {
         settings.figures.forEach(figure => {
             figure.points.forEach(p =>
-                canvas.point(math3D.xs(p), math3D.ys(p))
+                canvas.point(math3D.xs(p.add(figure.origin)), math3D.ys(p.add(figure.origin)))
             );
         });
     }

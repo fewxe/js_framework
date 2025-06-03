@@ -8,7 +8,7 @@ export default class Sphere extends Figure {
         super(origin);
         this._radius = radius;
         this._count = count;
-        this.localPoints = [];
+        this.points = [];
         this.edges = [];
         this.polygons = [];
         this.updateGeometry();
@@ -20,7 +20,7 @@ export default class Sphere extends Figure {
     set count(value) { this._count = value; this.updateGeometry(); }
 
     updateGeometry() {
-        this.localPoints = [];
+        this.points = [];
         this.edges = [];
         this.polygons = [];
         for (let i = 0; i <= this._count; i++) {
@@ -30,18 +30,18 @@ export default class Sphere extends Figure {
                 const x = this._radius * Math.sin(theta) * Math.cos(phi);
                 const y = this._radius * Math.sin(theta) * Math.sin(phi);
                 const z = this._radius * Math.cos(theta);
-                this.localPoints.push(new Point(x, y, z));
+                this.points.push(new Point(x, y, z));
             }
         }
-        for (let i = 0; i < this.localPoints.length; i++) {
+        for (let i = 0; i < this.points.length; i++) {
             if (i % (this._count + 1) !== this._count) {
                 this.edges.push(new Edge(i, i + 1));
             }
-            if (i + this._count + 1 < this.localPoints.length) {
+            if (i + this._count + 1 < this.points.length) {
                 this.edges.push(new Edge(i, i + this._count + 1));
             }
         }
-        for (let i = 0; i < this.localPoints.length - this._count - 2; i++) {
+        for (let i = 0; i < this.points.length - this._count - 2; i++) {
             if (i % (this._count + 1) !== this._count) {
                 this.polygons.push(new Polygon([i, i + 1, i + this._count + 2, i + this._count + 1], { r: 128, g: 0, b: 0 }));
             }

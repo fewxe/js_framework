@@ -10,14 +10,14 @@ class Torus extends Figure {
         this.tubeSegments = tubeSegments;
         this.radius = radius;
         this.tubeRadius = tubeRadius;
-        this.localPoints = [];
+        this.points = [];
         this.edges = [];
         this.polygons = [];
         this.updateGeometry();
     }
 
     updateGeometry() {
-        this.localPoints = [];
+        this.points = [];
         this.edges = [];
         this.polygons = [];
         const radialStep = (2 * Math.PI) / this.radialSegments;
@@ -31,7 +31,7 @@ class Torus extends Figure {
                 const tubeAngle = t * tubeStep;
                 const cosTube = Math.cos(tubeAngle);
                 const sinTube = Math.sin(tubeAngle);
-                this.localPoints.push(new Point(
+                this.points.push(new Point(
                     (this.radius + this.tubeRadius * cosTube) * cosRadial,
                     (this.radius + this.tubeRadius * cosTube) * sinRadial,
                     this.tubeRadius * sinTube

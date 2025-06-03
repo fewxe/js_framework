@@ -8,7 +8,7 @@ export default class Cube extends Figure {
     constructor(origin, size = 5) {
         super(origin);
         this._size = size;
-        this.localPoints = [];
+        this.points = [];
         this.edges = [];
         this.polygons = [];
         this.updateGeometry();
@@ -25,7 +25,7 @@ export default class Cube extends Figure {
 
     updateGeometry() {
         const size = this._size;
-        this.localPoints = [
+        this.points = [
             new Point(-size,  size,  size),
             new Point( size,  size,  size),
             new Point( size, -size,  size),

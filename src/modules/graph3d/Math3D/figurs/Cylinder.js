@@ -10,7 +10,7 @@ export default class Cylinder extends Figure {
         this._segments = segments;
         this._height = height;
         this._radius = radius;
-        this.localPoints = [];
+        this.points = [];
         this.edges = [];
         this.polygons = [];
         this.updateGeometry();
@@ -44,7 +44,7 @@ export default class Cylinder extends Figure {
     }
 
     updateGeometry() {
-        this.localPoints = [];
+        this.points = [];
         this.edges = [];
         this.polygons = [];
         const angleStep = (2 * Math.PI) / this._segments;
@@ -52,7 +52,7 @@ export default class Cylinder extends Figure {
         for (let level = -this._height; level <= this._height; level += this._height * 2) {
             for (let i = 0; i < this._segments; i++) {
                 const angle = angleStep * i;
-                this.localPoints.push(new Point(
+                this.points.push(new Point(
                     this._radius * Math.cos(angle),
                     this._radius * Math.sin(angle),
                     level
