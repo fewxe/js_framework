@@ -1,7 +1,8 @@
 export default class Polygon {
-    constructor(points = [], color = { r: 128, g: 128, b: 128 }) {
+    constructor(points = [], color = { r: 128, g: 128, b: 128 }, index = 0) {
         this.points = points;
         this.color = color;
+        this.index = index;
     }
 
     rgbToHex(r, g, b) {

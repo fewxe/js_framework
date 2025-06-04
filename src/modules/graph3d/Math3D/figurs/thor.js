@@ -61,6 +61,7 @@ export default class Thor extends Figure {
                 }
             }
         }
+        this.setIndexPolygons();
     }
 
     settings() {

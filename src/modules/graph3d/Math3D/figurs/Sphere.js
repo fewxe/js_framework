@@ -46,6 +46,7 @@ export default class Sphere extends Figure {
                 this.polygons.push(new Polygon([i, i + 1, i + this._count + 2, i + this._count + 1], { r: 128, g: 0, b: 0 }));
             }
         }
+        this.setIndexPolygons();
     }
 
     settings() {

@@ -7,4 +7,10 @@ export default class Figure{
         this.polygons=[];
         this.origin = origin;
     }
+
+    setIndexPolygons() {
+        this.polygons.forEach((polygon, index) => {
+            polygon.index = index;
+        });
+    }
 }

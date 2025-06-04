@@ -43,6 +43,7 @@ export default class ParabolicCylinder extends Figure {
                 this.polygons.push(new Polygon([i, i + 1 - this.count, i + 1, i + this.count]));
             }
         }
+        this.setIndexPolygons();
     }
 
     settings() {

@@ -88,6 +88,7 @@ export default class Cylinder extends Figure {
         this.polygons.push(new Polygon(
             Array.from({ length: this._segments }, (_, i) => i + this._segments)
         ));
+        this.setIndexPolygons();
     }
 
     settings() {

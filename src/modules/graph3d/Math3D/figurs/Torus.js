@@ -64,6 +64,7 @@ class Torus extends Figure {
                 this.polygons.push(new Polygon([a, b, c, d]));
             }
         }
+        this.setIndexPolygons();
     }
 
     settings() {

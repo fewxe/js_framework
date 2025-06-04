@@ -57,6 +57,7 @@ export default class Cube extends Figure {
             new Polygon([2, 3, 7, 6], { r: 255, g: 192, b: 203 }),
             new Polygon([4, 5, 6, 7], { r: 0, g: 0, b: 0 })
         ];
+        this.setIndexPolygons();
     }
 
     settings() {
