@@ -111,7 +111,6 @@ export default class Math3D {
 
     calcShadow(polygon, scene, LIGHT) {
         if (!polygon?.center || !LIGHT) return { isShadow: false };
-
         const toLight = this.calcVector(polygon.center, LIGHT);
         const toLightLen = this.calcVectorModule(toLight);
 
@@ -162,7 +161,7 @@ export default class Math3D {
         return Math.sqrt(v.x ** 2 + v.y ** 2 + v.z ** 2);
     }
 
-    calcRadius(figure, recalcRadius = false) {
+    calcRadius(figure) {
         figure.polygons.forEach(polygon => {
             let points = polygon.points.map(index => figure.points[index]);
             if (points.some(p => !p)) return;

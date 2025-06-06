@@ -5,7 +5,7 @@ function Menu({ menu }) {
   const [selectedButton, setSelectedButton] = useState(null);
 
   return (
-    <div>
+    <>
       {menu
         .filter(item => item.name !== selectedButton)
         .map(item => (
@@ -22,7 +22,7 @@ function Menu({ menu }) {
       <div>
         {activeContent}
       </div>
-    </div>
+    </>
   );
 }
 

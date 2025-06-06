@@ -8,7 +8,6 @@ const drawFunctionData = (graph, f) => {
   try {
     const func = new Function('x', `return ${f.funcStr}`);
     graph.drawFunction(func, f.color || '#ff0000');
-
     if (f.integralRange?.[0] !== '' && f.integralRange?.[1] !== '') {
       graph.drawIntegral(func, Number(f.integralRange[0]), Number(f.integralRange[1]));
     }
@@ -32,53 +31,57 @@ const Graph2D = () => {
   const canvasRef = useRef(null);
   const graphRef = useRef(null);
 
+  // Вся отрисовка — через useCanvas
   const renderFrame = (fps) => {
+    if (!graphRef.current) return;
     graphRef.current.clear();
     graphRef.current.drawGrid();
     functions.forEach(f => drawFunctionData(graphRef.current, f));
     drawFPS(graphRef.current._canvas, fps);
+    // ВАЖНО: выводим всё на реальный канвас!
+    graphRef.current._canvas.drawTo();
   };
 
-  const initGraph = () => {
-    const canvasApi = new Canvas({
-      canvas: canvasRef.current,
-      width: 800,
-      height: 600,
-      WIN: { LEFT: -40, BOTTOM: -30, WIDTH: 80, HEIGHT: 60 },
-      callbacks: {
-        wheel: e => {
-          e.preventDefault();
-          graphRef.current.zoom(e.deltaY < 0 ? 1.1 : 0.9);
-        },
-        mousedown: e => {
-          canvasRef.current._move = { x: e.offsetX, y: e.offsetY, active: true };
-        },
-        mouseup: () => {
-          if (canvasRef.current._move) canvasRef.current._move.active = false;
-        },
-        mouseleave: () => {
-          if (canvasRef.current._move) canvasRef.current._move.active = false;
-        },
-        mousemove: e => {
-          const m = canvasRef.current._move;
-          if (m && m.active) {
-            graphRef.current.offsetX += (e.offsetX - m.x) / graphRef.current.scale;
-            graphRef.current.offsetY -= (e.offsetY - m.y) / graphRef.current.scale;
-            m.x = e.offsetX;
-            m.y = e.offsetY;
+  // Инициализация Graph только один раз при появлении canvasRef
+  useEffect(() => {
+    if (canvasRef.current && !graphRef.current) {
+      const canvasApi = new Canvas({
+        canvas: canvasRef.current,
+        width: 800,
+        height: 600,
+        WIN: { LEFT: -40, BOTTOM: -30, WIDTH: 80, HEIGHT: 60 },
+        callbacks: {
+          wheel: e => {
+            e.preventDefault();
+            graphRef.current.zoom(e.deltaY < 0 ? 1.1 : 0.9);
+          },
+          mousedown: e => {
+            canvasRef.current._move = { x: e.offsetX, y: e.offsetY, active: true };
+          },
+          mouseup: () => {
+            if (canvasRef.current._move) canvasRef.current._move.active = false;
+          },
+          mouseleave: () => {
+            if (canvasRef.current._move) canvasRef.current._move.active = false;
+          },
+          mousemove: e => {
+            const m = canvasRef.current._move;
+            if (m && m.active) {
+              graphRef.current.offsetX += (e.offsetX - m.x) / graphRef.current.scale;
+              graphRef.current.offsetY -= (e.offsetY - m.y) / graphRef.current.scale;
+              m.x = e.offsetX;
+              m.y = e.offsetY;
+            }
           }
         }
-      }
-    });
-    graphRef.current = new Graph(canvasApi);
-  };
+      });
+      graphRef.current = new Graph(canvasApi);
+    }
+  }, [canvasRef]);
 
   const [startRender, stopRender] = useCanvas(renderFrame);
 
   useEffect(() => {
-    if (!graphRef.current && canvasRef.current) {
-      initGraph();
-    }
     startRender();
     return stopRender;
   }, [startRender, stopRender]);
@@ -93,7 +96,7 @@ const Graph2D = () => {
 
   const handleRemove = useCallback(i => {
     setFunctions(f => f.filter((_, idx) => idx !== i));
-  });
+  }, []);
 
   return (
     <div>
