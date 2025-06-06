@@ -4,7 +4,6 @@ import Canvas from '../../modules/Canvas/Canvas.js';
 import Math3D from '../../modules/graph3d/Math3D.js';
 import Light from '../../modules/graph3d/Math3D/entities/Light.js';
 import Point from '../../modules/graph3d/Math3D/entities/Point.js';
-import Cube from '../../modules/graph3d/Math3D/figurs/Cube.js';
 import UI3D from './UI3D/UI3D.js';
 
 const Graph3D = () => {
@@ -18,7 +17,7 @@ const Graph3D = () => {
     HEIGHT: 10, 
     CENTER: new Point(0, 0, 30),
     CAMERA: new Point(0, 0, 50),
-    LIGHT: new Light(-40, 5, 10, 25000),
+    LIGHT: new Light(-40, -10, 10, 25000),
   };
 
   const math3D = new Math3D({ WIN });
@@ -28,7 +27,7 @@ const Graph3D = () => {
     printPolygons: true,
     printPoint: true,
     printEdges: true,
-    figures: [new Cube()],
+    figures: [],
   }
 
   const handleMouseDown = e => {
@@ -72,7 +71,7 @@ const Graph3D = () => {
     settings.figures.forEach(figure => {
         math3D.calcRadius(figure);
         math3D.calcDistance(figure, WIN.CAMERA, 'distance');
-        math3D.calcDistance(figure, WIN.LIGHT, 'lumen');
+        math3D.calcDistance(figure, WIN.LIGHT, 'distanseToLight');
     });
 
     let allPolygons = [];
@@ -99,17 +98,18 @@ const Graph3D = () => {
                 settings.figures,
                 WIN.LIGHT
             );
-            const lumen = math3D.calcIllumination(
-                polygon.lumen,
+            const distanseToLight = math3D.calcIllumination(
+                polygon.distanseToLight,
                 WIN.LIGHT.lumen * (isShadow ? dark : 1)
             );
             const { r, g, b } = polygon.color;
+            
             canvas.polygon(
                 projected,
                 polygon.rgbToHex(
-                    Math.round(r * lumen),
-                    Math.round(g * lumen),
-                    Math.round(b * lumen)
+                    Math.round(r * distanseToLight * polygon.lumen),
+                    Math.round(g * distanseToLight * polygon.lumen),
+                    Math.round(b * distanseToLight * polygon.lumen)
                 )
             );
         });

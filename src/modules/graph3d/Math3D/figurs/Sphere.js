@@ -4,7 +4,7 @@ import Point from '../entities/Point.js';
 import Polygon from '../entities/Polygon.js';
 
 export default class Sphere extends Figure {
-    constructor(origin = new Point(0, 0, 0), radius = 10, count = 50) {
+    constructor(origin = new Point(0, 0, 0), radius = 10, count = 25) {
         super(origin);
         this._radius = radius;
         this._count = count;

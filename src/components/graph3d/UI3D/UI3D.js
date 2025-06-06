@@ -72,7 +72,7 @@ const UI3D = ({ settings, WIN }) => {
     const handleOriginChange = (axis, value) => {
         const fig = settings.figures[selectedIndex];
         if (fig) {
-            fig.origin[axis] = parseFloat(value) || 0;
+            fig.origin[axis] = parseFloat(value);
             forceUpdate({});
         }
     };

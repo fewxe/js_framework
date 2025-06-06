@@ -3,6 +3,7 @@ export default class Polygon {
         this.points = points;
         this.color = color;
         this.index = index;
+        this.lumen = 1;
     }
 
     rgbToHex(r, g, b) {
