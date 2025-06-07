@@ -16,33 +16,38 @@ export default class HyperbolicParaboloid extends Figure {
     }
 
     updateGeometry() {
+        const a = this.a, b = this.b;
+        const count = this.count;
+        const size = 10;
         this.points = [];
         this.edges = [];
         this.polygons = [];
-        for (let x = -10; x < 10; x++) {
-            for (let y = -10; y < 10; y++) {
+        
+        const step = (2 * size) / (count - 1);
+        for (let i = 0; i < count; i++) {
+            const x = -size + i * step;
+            for (let j = 0; j < count; j++) {
+                const y = -size + j * step;
                 this.points.push(new Point(
                     x,
                     y,
-                    x * x / (this.a * this.a) - y * y / (this.b * this.b)
+                    x * x / (a * a) - y * y / (b * b)
                 ));
             }
         }
+        // Рёбра
         for (let i = 0; i < this.points.length; i++) {
-            if (i + 1 < this.points.length && (i + 1) % this.count !== 0) {
+            if ((i + 1) % count !== 0) {
                 this.edges.push(new Edge(i, i + 1));
             }
-            if (i < this.points.length - this.count) {
-                this.edges.push(new Edge(i, i + this.count));
+            if (i + count < this.points.length) {
+                this.edges.push(new Edge(i, i + count));
             }
         }
-        for (let i = 0; i < this.points.length; i++) {
-            if (i % 2 === 0) {
-                if (i + 1 + this.count < this.points.length && (i + 1) % this.count !== 0) {
-                    this.polygons.push(new Polygon([i, i + 1, i + 1 + this.count, i + this.count]));
-                }
-            } else if (i + 1 + this.count < this.points.length && (i + 1) % this.count !== 0) {
-                this.polygons.push(new Polygon([i, i + 1, i + 1 + this.count, i + this.count]));
+        // Полигоны
+        for (let i = 0; i < this.points.length - count; i++) {
+            if ((i + 1) % count !== 0) {
+                this.polygons.push(new Polygon([i, i + 1, i + 1 + count, i + count]));
             }
         }
         this.setIndexPolygons();
@@ -52,10 +57,20 @@ export default class HyperbolicParaboloid extends Figure {
         return (
             <div>
                 <label>
+                    Количество полигонов:
+                    <input
+                        type="number"
+                        defaultValue={this.count}
+                        min={3}
+                        onChange={e => { this.count = parseInt(e.target.value, 10) || 3; this.updateGeometry(); }}
+                    />
+                </label>
+                <label>
                     a:
                     <input
                         type="number"
                         defaultValue={this.a}
+                        min={1}
                         onChange={e => { this.a = parseFloat(e.target.value) || 1; this.updateGeometry(); }}
                     />
                 </label>
@@ -64,16 +79,8 @@ export default class HyperbolicParaboloid extends Figure {
                     <input
                         type="number"
                         defaultValue={this.b}
+                        min={1}
                         onChange={e => { this.b = parseFloat(e.target.value) || 1; this.updateGeometry(); }}
-                    />
-                </label>
-                <label>
-                    count:
-                    <input
-                        type="number"
-                        defaultValue={this.count}
-                        min={3}
-                        onChange={e => { this.count = parseInt(e.target.value, 10) || 3; this.updateGeometry(); }}
                     />
                 </label>
             </div>

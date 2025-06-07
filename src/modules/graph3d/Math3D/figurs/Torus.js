@@ -4,10 +4,9 @@ import Point from '../entities/Point.js';
 import Polygon from '../entities/Polygon.js';
 
 class Torus extends Figure {
-    constructor(origin = new Point(0, 0, 0), radialSegments = 20, tubeSegments = 10, radius = 10, tubeRadius = 3) {
+    constructor(origin = new Point(0, 0, 0), count = 20, radius = 10, tubeRadius = 3) {
         super(origin);
-        this.radialSegments = radialSegments;
-        this.tubeSegments = tubeSegments;
+        this.count = count;
         this.radius = radius;
         this.tubeRadius = tubeRadius;
         this.points = [];
@@ -17,50 +16,54 @@ class Torus extends Figure {
     }
 
     updateGeometry() {
+        const radialSegments = this.count;
+        const tubeSegments = this.count;
+        const radius = this.radius;
+        const tubeRadius = this.tubeRadius;
         this.points = [];
         this.edges = [];
         this.polygons = [];
-        const radialStep = (2 * Math.PI) / this.radialSegments;
-        const tubeStep = (2 * Math.PI) / this.tubeSegments;
+        const radialStep = (2 * Math.PI) / radialSegments;
+        const tubeStep = (2 * Math.PI) / tubeSegments;
 
-        for (let r = 0; r < this.radialSegments; r++) {
+        for (let r = 0; r < radialSegments; r++) {
             const radialAngle = r * radialStep;
             const cosRadial = Math.cos(radialAngle);
             const sinRadial = Math.sin(radialAngle);
-            for (let t = 0; t < this.tubeSegments; t++) {
+            for (let t = 0; t < tubeSegments; t++) {
                 const tubeAngle = t * tubeStep;
                 const cosTube = Math.cos(tubeAngle);
                 const sinTube = Math.sin(tubeAngle);
                 this.points.push(new Point(
-                    (this.radius + this.tubeRadius * cosTube) * cosRadial,
-                    (this.radius + this.tubeRadius * cosTube) * sinRadial,
-                    this.tubeRadius * sinTube
+                    (radius + tubeRadius * cosTube) * cosRadial,
+                    (radius + tubeRadius * cosTube) * sinRadial,
+                    tubeRadius * sinTube
                 ));
             }
         }
-        for (let r = 0; r < this.radialSegments; r++) {
-            const ringStart = r * this.tubeSegments;
-            for (let t = 0; t < this.tubeSegments; t++) {
+        for (let r = 0; r < radialSegments; r++) {
+            const ringStart = r * tubeSegments;
+            for (let t = 0; t < tubeSegments; t++) {
                 this.edges.push(new Edge(
                     ringStart + t,
-                    ringStart + (t + 1) % this.tubeSegments
+                    ringStart + (t + 1) % tubeSegments
                 ));
             }
         }
-        for (let t = 0; t < this.tubeSegments; t++) {
-            for (let r = 0; r < this.radialSegments; r++) {
+        for (let t = 0; t < tubeSegments; t++) {
+            for (let r = 0; r < radialSegments; r++) {
                 this.edges.push(new Edge(
-                    r * this.tubeSegments + t,
-                    ((r + 1) % this.radialSegments) * this.tubeSegments + t
+                    r * tubeSegments + t,
+                    ((r + 1) % radialSegments) * tubeSegments + t
                 ));
             }
         }
-        for (let r = 0; r < this.radialSegments; r++) {
-            for (let t = 0; t < this.tubeSegments; t++) {
-                const a = r * this.tubeSegments + t;
-                const b = r * this.tubeSegments + (t + 1) % this.tubeSegments;
-                const c = ((r + 1) % this.radialSegments) * this.tubeSegments + (t + 1) % this.tubeSegments;
-                const d = ((r + 1) % this.radialSegments) * this.tubeSegments + t;
+        for (let r = 0; r < radialSegments; r++) {
+            for (let t = 0; t < tubeSegments; t++) {
+                const a = r * tubeSegments + t;
+                const b = r * tubeSegments + (t + 1) % tubeSegments;
+                const c = ((r + 1) % radialSegments) * tubeSegments + (t + 1) % tubeSegments;
+                const d = ((r + 1) % radialSegments) * tubeSegments + t;
                 this.polygons.push(new Polygon([a, b, c, d]));
             }
         }
@@ -71,19 +74,30 @@ class Torus extends Figure {
         return (
             <div>
                 <label>
-                    Радиус:
-                    <input
-                        type="number"
-                        defaultValue={this.radius}
-                        onChange={e => { this.radius = parseFloat(e.target.value); this.updateGeometry(); }}
-                    />
-                </label>
-                <label>
                     Количество полигонов:
                     <input
                         type="number"
-                        defaultValue={this.radialSegments}
-                        onChange={e => { this.radialSegments = parseInt(e.target.value, 10); this.updateGeometry(); }}
+                        defaultValue={this.count}
+                        min={3}
+                        onChange={e => { this.count = parseInt(e.target.value, 10) || 3; this.updateGeometry(); }}
+                    />
+                </label>
+                <label>
+                    Радиус тора:
+                    <input
+                        type="number"
+                        defaultValue={this.radius}
+                        min={1}
+                        onChange={e => { this.radius = parseFloat(e.target.value) || 1; this.updateGeometry(); }}
+                    />
+                </label>
+                <label>
+                    Радиус трубы:
+                    <input
+                        type="number"
+                        defaultValue={this.tubeRadius}
+                        min={1}
+                        onChange={e => { this.tubeRadius = parseFloat(e.target.value) || 1; this.updateGeometry(); }}
                     />
                 </label>
             </div>

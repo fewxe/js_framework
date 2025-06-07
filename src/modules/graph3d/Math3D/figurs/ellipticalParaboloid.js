@@ -16,16 +16,17 @@ export default class EllipticalParaboloid extends Figure {
     }
 
     updateGeometry() {
+        const a = this.a, b = this.b;
+        const dt = Math.PI * 2 / this.count;
         this.points = [];
         this.edges = [];
         this.polygons = [];
-        const dt = Math.PI * 2 / this.count;
         for (let i = 0; i <= Math.PI; i += dt) {
             for (let j = 0; j < 2 * Math.PI; j += dt) {
                 this.points.push(new Point(
-                    this.a * i * Math.cos(j),
+                    a * i * Math.cos(j),
                     i * i,
-                    this.b * i * Math.sin(j)
+                    b * i * Math.sin(j)
                 ));
             }
         }
@@ -53,10 +54,20 @@ export default class EllipticalParaboloid extends Figure {
         return (
             <div>
                 <label>
+                    Количество полигонов:
+                    <input
+                        type="number"
+                        defaultValue={this.count}
+                        min={3}
+                        onChange={e => { this.count = parseInt(e.target.value, 10) || 3; this.updateGeometry(); }}
+                    />
+                </label>
+                <label>
                     a:
                     <input
                         type="number"
                         defaultValue={this.a}
+                        min={1}
                         onChange={e => { this.a = parseFloat(e.target.value) || 1; this.updateGeometry(); }}
                     />
                 </label>
@@ -65,16 +76,8 @@ export default class EllipticalParaboloid extends Figure {
                     <input
                         type="number"
                         defaultValue={this.b}
+                        min={1}
                         onChange={e => { this.b = parseFloat(e.target.value) || 1; this.updateGeometry(); }}
-                    />
-                </label>
-                <label>
-                    count:
-                    <input
-                        type="number"
-                        defaultValue={this.count}
-                        min={3}
-                        onChange={e => { this.count = parseInt(e.target.value, 10) || 3; this.updateGeometry(); }}
                     />
                 </label>
             </div>

@@ -17,6 +17,7 @@ export default class TwoSheetedHyperboloid extends Figure {
     }
 
     updateGeometry() {
+        const a = this.a, b = this.b, c = this.c;
         this.points = [];
         this.edges = [];
         this.polygons = [];
@@ -24,18 +25,18 @@ export default class TwoSheetedHyperboloid extends Figure {
         for (let i = 0; i <= Math.PI; i += dt) {
             for (let j = 0; j < 2 * Math.PI; j += dt) {
                 this.points.push(new Point(
-                    this.a * Math.sinh(i) * Math.cos(j),
-                    this.c * Math.cosh(i),
-                    this.b * Math.cosh(i) * Math.sin(j)
+                    a * Math.sinh(i) * Math.cos(j),
+                    c * Math.cosh(i),
+                    b * Math.cosh(i) * Math.sin(j)
                 ));
             }
         }
         for (let i = 0; i <= Math.PI; i += dt) {
             for (let j = 0; j < 2 * Math.PI; j += dt) {
                 this.points.push(new Point(
-                    -this.a * Math.sinh(i) * Math.cos(j),
-                    -this.c * Math.cosh(i),
-                    -this.b * Math.cosh(i) * Math.sin(j)
+                    -a * Math.sinh(i) * Math.cos(j),
+                    -c * Math.cosh(i),
+                    -b * Math.cosh(i) * Math.sin(j)
                 ));
             }
         }
@@ -80,11 +81,21 @@ export default class TwoSheetedHyperboloid extends Figure {
         return (
             <div>
                 <label>
+                    Количество полигонов:
+                    <input
+                        type="number"
+                        defaultValue={this.count}
+                        min={3}
+                        onChange={e => { this.count = parseInt(e.target.value, 10) || 3; this.updateGeometry(); }}
+                    />
+                </label>
+                <label>
                     a:
                     <input
                         type="number"
                         defaultValue={this.a}
-                        onChange={e => { this.a = parseFloat(e.target.value); this.updateGeometry(); }}
+                        min={1}
+                        onChange={e => { this.a = parseFloat(e.target.value) || 1; this.updateGeometry(); }}
                     />
                 </label>
                 <label>
@@ -92,7 +103,8 @@ export default class TwoSheetedHyperboloid extends Figure {
                     <input
                         type="number"
                         defaultValue={this.b}
-                        onChange={e => { this.b = parseFloat(e.target.value); this.updateGeometry(); }}
+                        min={1}
+                        onChange={e => { this.b = parseFloat(e.target.value) || 1; this.updateGeometry(); }}
                     />
                 </label>
                 <label>
@@ -100,16 +112,8 @@ export default class TwoSheetedHyperboloid extends Figure {
                     <input
                         type="number"
                         defaultValue={this.c}
-                        onChange={e => { this.c = parseFloat(e.target.value); this.updateGeometry(); }}
-                    />
-                </label>
-                <label>
-                    count:
-                    <input
-                        type="number"
-                        defaultValue={this.count}
-                        min={3}
-                        onChange={e => { this.count = parseInt(e.target.value, 10); this.updateGeometry(); }}
+                        min={1}
+                        onChange={e => { this.c = parseFloat(e.target.value) || 1; this.updateGeometry(); }}
                     />
                 </label>
             </div>

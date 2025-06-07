@@ -14,10 +14,10 @@ export default class HyperbolicCylinder extends Figure {
     }
 
     updateGeometry() {
+        let size = 5;
         this.points = [];
         this.edges = [];
         this.polygons = [];
-        let size = 5;
         for (let i = -this.count; i < this.count; i++) {
             for (let j = 0; j < this.count; j++) {
                 const x = i + size / this.count;
@@ -76,7 +76,7 @@ export default class HyperbolicCylinder extends Figure {
         return (
             <div>
                 <label>
-                    count:
+                    Количество полигонов:
                     <input
                         type="number"
                         defaultValue={this.count}

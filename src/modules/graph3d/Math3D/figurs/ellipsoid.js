@@ -4,12 +4,12 @@ import Point from '../entities/Point.js';
 import Polygon from '../entities/Polygon.js';
 
 export default class Ellipsoid extends Figure {
-    constructor(origin = new Point(0, 0, 0), a = 18, b = 14, c = 10, count = 20) {
+    constructor(origin = new Point(0, 0, 0), count = 20, a = 18, b = 14, c = 10) {
         super(origin);
+        this.count = count;
         this.a = a;
         this.b = b;
         this.c = c;
-        this.count = count;
         this.points = [];
         this.edges = [];
         this.polygons = [];
@@ -17,16 +17,17 @@ export default class Ellipsoid extends Figure {
     }
 
     updateGeometry() {
+        const a = this.a, b = this.b, c = this.c;
+        const dt = Math.PI * 2 / this.count;
         this.points = [];
         this.edges = [];
         this.polygons = [];
-        const dt = Math.PI * 2 / this.count;
         for (let i = 0; i <= Math.PI; i += dt) {
             for (let j = 0; j < Math.PI * 2; j += dt) {
                 this.points.push(new Point(
-                    this.a * Math.sin(i) * Math.cos(j),
-                    this.b * Math.sin(i) * Math.sin(j),
-                    this.c * Math.cos(i)
+                    a * Math.sin(i) * Math.cos(j),
+                    b * Math.sin(i) * Math.sin(j),
+                    c * Math.cos(i)
                 ));
             }
         }
@@ -54,10 +55,20 @@ export default class Ellipsoid extends Figure {
         return (
             <div>
                 <label>
+                    Количество полигонов:
+                    <input
+                        type="number"
+                        defaultValue={this.count}
+                        min={3}
+                        onChange={e => { this.count = parseInt(e.target.value, 10) || 3; this.updateGeometry(); }}
+                    />
+                </label>
+                <label>
                     a:
                     <input
                         type="number"
                         defaultValue={this.a}
+                        min={1}
                         onChange={e => { this.a = parseFloat(e.target.value) || 1; this.updateGeometry(); }}
                     />
                 </label>
@@ -66,6 +77,7 @@ export default class Ellipsoid extends Figure {
                     <input
                         type="number"
                         defaultValue={this.b}
+                        min={1}
                         onChange={e => { this.b = parseFloat(e.target.value) || 1; this.updateGeometry(); }}
                     />
                 </label>
@@ -74,16 +86,8 @@ export default class Ellipsoid extends Figure {
                     <input
                         type="number"
                         defaultValue={this.c}
+                        min={1}
                         onChange={e => { this.c = parseFloat(e.target.value) || 1; this.updateGeometry(); }}
-                    />
-                </label>
-                <label>
-                    count:
-                    <input
-                        type="number"
-                        defaultValue={this.count}
-                        min={3}
-                        onChange={e => { this.count = parseInt(e.target.value, 10) || 3; this.updateGeometry(); }}
                     />
                 </label>
             </div>
